@@ -1,0 +1,23 @@
+{
+  "name": "v.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bopjesvla/v.js.git"
+  },
+  "author": "Bob",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/bopjesvla/v.js/issues"
+  },
+  "homepage": "https://github.com/bopjesvla/v.js#readme",
+  "dependencies": {
+    "alasql": "^0.2.7",
+    "js-object-pretty-print": "^0.2.0"
+  }
+}
