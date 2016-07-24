@@ -1,7 +1,9 @@
 var v = require('.')
+var fs = require('fs')
+var sql = fs.readFileSync('./dump.sql', 'utf8')
 
-var mod = v('create table q (a text, constraint test check (a REGEXP "5"), constraint test2 check (a REGEXP "6"));')
+var mod = v(sql, {fn: {char_length: x => x.length, nextval: x => 1}, embedValidator: true})
 eval(mod)
 var validate = module.exports
 
-console.log(validate('q', {a: '4'}))
+console.log(validate('users', {email: 'a@b', password: '1'.repeat(64)}, {ignoreDefaults: 0}))
