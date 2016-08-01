@@ -1,6 +1,6 @@
 {
-  "name": "v.js",
-  "version": "1.0.0",
+  "name": "v-js",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "bin": "bin.js",
@@ -19,9 +19,9 @@
   },
   "homepage": "https://github.com/bopjesvla/v.js#readme",
   "dependencies": {
-    "alasql": "^0.2.7"
-  },
-  "devDependencies": {
-    "pg": "^6.0.3"
+    "alasql": "^0.2.7",
+    "js-object-pretty-print": "^0.2.0",
+    "pg": "^6.0.3",
+    "yargs": "^4.8.1"
   }
 }

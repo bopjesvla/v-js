@@ -1,10 +1,22 @@
 var helpers = require('./helpers')
 
+var merge = function(a, b) {
+  var c = helpers.utils.extend({}, a)
+  helpers.utils.extend(c, b)
+  return c
+}
+
 var Schema = module.exports = function(v, opts) {
-  opts = opts || {}
   this.v = v
   this.helpers = helpers.utils.extend({}, helpers)
-  this.helpers.fn = opts.fn
+  this.helpers.fn = {}
+  this.opts = opts || {}
+}
+Schema.prototype.functions = function(fns) {
+  helpers.utils.extend(this.helpers.fn, fns)
+}
+Schema.prototype.options = function(opts) {
+  helpers.utils.extend(this.opts, opts)
 }
 Schema.prototype.defaults = function(table_name, column, data) {
   var t = this.v.tables[table_name]
@@ -37,7 +49,9 @@ Schema.prototype.validateCheckConstraint = function(constraint, data) {
   }
 }
 Schema.prototype.validate = function(table, data, opts) {
-  opts = opts || {}, t = this.v.tables[table]
+  var t = this.v.tables[table]
+
+  opts = merge(this.opts, opts || {}) 
 
   if (!t) {
     return {error: 'table_missing'}
@@ -71,8 +85,8 @@ Schema.prototype.validate = function(table, data, opts) {
   
   if (!opts.ignoreDefaults) {
     var defaults = this.defaults(table, void 0, data)
-    data = alasql.utils.extend({}, data)
-    alasql.utils.extend(data, defaults)
+    data = this.helpers.utils.extend({}, data)
+    this.helpers.utils.extend(data, defaults)
   }
 
 
