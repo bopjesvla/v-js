@@ -1,11 +1,14 @@
 var alasql = require('../alasql')
 var fs = require('fs')
+var path = require('path')
 
-var template = fs.readFileSync('./output-template.js', 'utf8')
+var f = path.join.bind(path, __dirname)
+
+var template = fs.readFileSync(f('./output-template.js'), 'utf8')
 var pretty = require('js-object-pretty-print').pretty
 var toString = x => pretty(x, void 0, void 0, true)
 
-var getSchema = fs.readFileSync('./getschema.sql', 'utf8')
+var getSchema = fs.readFileSync(f('./getschema.sql'), 'utf8')
 var pg = require('pg')
 
 var v = module.exports = function(opts, cb) {
