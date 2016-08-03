@@ -85,7 +85,7 @@ Schema.prototype.validate = function(table, data, opts) {
     for (column in t.columns) {
       if (data[column] == null || data[column] === '') {
         var checks = t.columns[column].checks
-        for (var i = 0; i < checkobj; i++) {
+        for (var i = 0; i < checks.length; i++) {
           checkobj[checks[i]] = false
         }
       }

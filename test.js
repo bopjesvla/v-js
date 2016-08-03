@@ -15,5 +15,5 @@ var mod = v({client, sql: 'create table cool(a text check (a = "c"))', tables: {
   console.log(res)
   eval(res.replace(/v-js/g, '.'))
   var schema = module.exports
-  console.log(schema.validate('cool', {a: 2}, {}))
+  console.log(schema.validate('users', {email: 'a@a', password: null}, {ignoreEmpty: true, ignoreUnknown: true}))
 })
