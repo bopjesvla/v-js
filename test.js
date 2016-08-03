@@ -10,11 +10,9 @@ eval(v('create table cool(a text check (a = "c"))').replace(/v-js/g, '.'))
 console.log(module.exports.validate('cool', {a: 2}))
 
 var mod = v({client, tables: {
-  users: ['email']
+  users: ['email', 'password']
 }}, (err, res) => {
-  console.log(res)
   eval(res.replace(/v-js/g, '.'))
   var schema = module.exports
-  schema.functions( require('./fn'))
-  console.log(schema.validate('users', {email: 'a@b', password: '1234567891234567891234567890001234567890'}, {ignoreDefaults: true}))
+  console.log(schema.validate('users', {email: 'a@b', s: 2}, {ignoreUnknown: true, columns: ['email']}))
 })

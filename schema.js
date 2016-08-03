@@ -56,32 +56,47 @@ Schema.prototype.validate = function(table, data, opts) {
   if (!t) {
     return {error: 'table_missing'}
   }
-
-  for (var field in data) {
-    if (!t.columns[field]) {
-      return {error: 'invalid_field', violated: field}
+  if (!opts.ignoreUnknown) {
+    for (var field in data) {
+      if (!t.columns[field]) {
+        return {error: 'invalid_field', violated: field}
+      }
     }
   }
 
-  var checklist = t.checks, ignoredChecks = {}
+  var checklist = t.checks, checkobj = {}
 
   if (Array.isArray(opts.checks)) {
     checklist = opts.checks
   }
-  else {
-    if (typeof opts.checks == 'object')
-      ignoredChecks = opts.checks
-    if (opts.ignoreEmpty) {
-      for (column in t.columns) {
-        if (data[column] == null || data[column] === '') {
-          var checks = t.columns[column].checks
-          for (var i = 0; i < ignoredChecks; i++) {
-            ignoredChecks[checks[i]] = false
-          }
+  else if (typeof opts.checks == 'object') {
+    checkobj = opts.checks
+  }
+
+  if (opts.ignoreEmpty) {
+    for (column in t.columns) {
+      if (data[column] == null || data[column] === '') {
+        var checks = t.columns[column].checks
+        for (var i = 0; i < checkobj; i++) {
+          checkobj[checks[i]] = false
         }
       }
     }
   }
+
+  if (opts.columns) {
+    for (column in t.columns) {
+      console.log(opts.columns, column)
+      if (opts.columns.indexOf(column) == -1) {
+        var checks = t.columns[column].checks
+        for (var i = 0; i < checks.length; i++) {
+          checkobj[checks[i]] = false
+        }
+      }
+    }
+  }
+
+  console.log(checkobj)
   
   if (!opts.ignoreDefaults) {
     var defaults = this.defaults(table, void 0, data)
@@ -94,9 +109,9 @@ Schema.prototype.validate = function(table, data, opts) {
 
   var violated = []
 
-  if (!opts.ignoreEmpty && !opts.allowNotNull) {
+  if (!opts.ignoreEmpty && !opts.ignoreNull) {
     for (var column in t.columns) {
-      if (t.columns[column].notnull && data[column] == null) {
+      if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && data[column] == null) {
         violated.push(column + '_not_null')
         if (!opts.checkAll) {
           return {error: 'constraint_violated', violated: violated} 
@@ -112,7 +127,7 @@ Schema.prototype.validate = function(table, data, opts) {
       return {error: 'constraint_missing', constraint: check_name}
     }
 
-    if (ignoredChecks[check_name] !== false && !check(data, this.helpers)) {
+    if (checkobj[check_name] !== false && !check(data, this.helpers)) {
       violated.push(check_name)
 
       if (!opts.checkAll) {
