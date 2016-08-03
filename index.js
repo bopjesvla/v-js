@@ -41,13 +41,16 @@ v.createModule = function(vs, opts) {
 
 v.helpers = function() {
   // patching for serialization
-  var global = alasql.utils.global
   alasql.stdfn.CHAR = function(x) { return String.fromCharCode(x) }
-  alasql.utils.global = null
+  var utils = alasql.utils.extend({}, alasql.utils)
+  utils.global = null
+  for (u in utils) {
+    if (/(F|^f)ile/.test(u)) {
+      delete utils[u]
+    }
+  }
 
-  var helperString = toString({stdfn: alasql.stdfn, utils: alasql.utils})
-
-  alasql.utils.global = global
+  var helperString = toString({stdfn: alasql.stdfn, utils})
 
   return helperString
 }
