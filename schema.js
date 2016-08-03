@@ -94,7 +94,6 @@ Schema.prototype.validate = function(table, data, opts) {
 
   if (opts.columns) {
     for (column in t.columns) {
-      console.log(opts.columns, column)
       if (opts.columns.indexOf(column) == -1) {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
@@ -104,16 +103,12 @@ Schema.prototype.validate = function(table, data, opts) {
     }
   }
 
-  console.log(checkobj)
-  
   if (!opts.ignoreDefaults) {
     var defaults = this.defaults(table, void 0, data)
     data = extend({}, data)
     extend(data, defaults)
   }
 
-
-  //console.log(t.columns.created.notnull)
 
   var violated = []
 
