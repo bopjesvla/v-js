@@ -1,22 +1,26 @@
 var helpers = require('./helpers')
 
-var merge = function(a, b) {
-  var c = helpers.utils.extend({}, a)
-  helpers.utils.extend(c, b)
+var extend = helpers.utils.extend, merge = function(a, b) {
+  var c = extend({}, a)
+  extend(c, b)
   return c
 }
 
 var Schema = module.exports = function(v, opts) {
-  this.v = v
-  this.helpers = helpers.utils.extend({}, helpers)
+  v = [].concat(v)
+  this.v = {checks: {}, tables: {}}
+  for (var i = 0; i < v.length; i++) {
+    this.extend(v[i])
+  }
+  this.helpers = extend({}, helpers)
   this.helpers.fn = {}
   this.opts = opts || {}
 }
 Schema.prototype.functions = function(fns) {
-  helpers.utils.extend(this.helpers.fn, fns)
+  extend(this.helpers.fn, fns)
 }
 Schema.prototype.options = function(opts) {
-  helpers.utils.extend(this.opts, opts)
+  extend(this.opts, opts)
 }
 Schema.prototype.defaults = function(table_name, column, data) {
   var t = this.v.tables[table_name]
@@ -47,6 +51,10 @@ Schema.prototype.validateCheckConstraint = function(constraint, data) {
   else {
     return {error: 'constraint_missing', constraint: constraint}
   }
+}
+Schema.prototype.extend = function(schema) {
+  extend(this.v.checks, schema.checks)
+  extend(this.v.tables, schema.tables)
 }
 Schema.prototype.validate = function(table, data, opts) {
   var t = this.v.tables[table]
@@ -100,8 +108,8 @@ Schema.prototype.validate = function(table, data, opts) {
   
   if (!opts.ignoreDefaults) {
     var defaults = this.defaults(table, void 0, data)
-    data = this.helpers.utils.extend({}, data)
-    this.helpers.utils.extend(data, defaults)
+    data = extend({}, data)
+    extend(data, defaults)
   }
 
 

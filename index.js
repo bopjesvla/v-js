@@ -13,18 +13,28 @@ var pg = require('pg')
 
 var v = module.exports = function(opts, cb) {
   if (typeof opts == 'string') {
-    return v.createModule(v.fromSQL(opts), opts)
+    opts = {sql: opts}
   }
-  v.fromPG(opts, (err, res) => cb(err, v.createModule(res, opts)))
+  var vs = []
+  if (opts.sql) {
+    vs = vs.concat(opts.sql).map(sql => v.fromSQL(sql))
+  }
+  if (opts.client) {
+    v.fromPG(opts, (err, res) => cb(err, v.createModule([res].concat(vs), opts))) 
+  }
+  else {
+    return v.createModule(vs, opts) 
+  }
 }
 
 v.default = v
 
-v.createModule = function(v, opts) {
-  var mod = template.replace('$v', toString(v))
+v.createModule = function(vs, opts) {
+  opts = opts || {}
+  var mod = template.replace('$v', toString(vs))
 
   if (opts.fn !== false) {
-    mod += `\n\n schema.functions(require('${opts.fn || 'v-js/fn'}'))`
+    mod += `\n\nschema.functions(require('${opts.fn || 'v-js/fn'}'))`
   }
   return mod
 }
