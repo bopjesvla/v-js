@@ -9,11 +9,12 @@ var client = {user: 'postgres', password: '12zxcv', database: 'SLAPTCHA'}
 eval(v('create table cool(a text check (a = "c"))').replace(/v-js/g, '.'))
 console.log(module.exports.validate('cool', {a: 2}))
 
-var mod = v({client, sql: 'create table cool(a text check (a = "c"))', tables: {
+var mod = v({client, sql: 'create table cool(a text not null)', tables: {
   users: ['email', 'password']
 }}, (err, res) => {
   console.log(res)
   eval(res.replace(/v-js/g, '.'))
   var schema = module.exports
   console.log(schema.validate('users', {email: 'a@a', password: null}, {ignoreEmpty: true, ignoreUnknown: true}))
+  console.log(schema.validate('cool', {}))
 })
