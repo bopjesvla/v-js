@@ -12,6 +12,8 @@ var getSchema = fs.readFileSync(f('./getschema.sql'), 'utf8')
 var pg = require('pg')
 
 var v = module.exports = function(opts, cb) {
+  cb = cb || (x => x)
+
   if (typeof opts == 'string') {
     opts = {sql: opts}
   }
@@ -23,7 +25,9 @@ var v = module.exports = function(opts, cb) {
     v.fromPG(opts, (err, res) => cb(err, v.createModule([res].concat(vs), opts))) 
   }
   else {
-    return v.createModule(vs, opts) 
+    var mod = v.createModule(vs, opts)
+    cb(mod) 
+    return mod
   }
 }
 
