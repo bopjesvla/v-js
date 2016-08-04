@@ -67,7 +67,7 @@ Schema.prototype.validate = function(table, data, opts) {
   if (!opts.ignoreUnknown) {
     for (var field in data) {
       if (!t.columns[field]) {
-        return {error: 'invalid_field', violated: field}
+        return {error: 'unknown_field', violated: [field]}
       }
     }
   }
@@ -112,9 +112,9 @@ Schema.prototype.validate = function(table, data, opts) {
 
   var violated = []
 
-  if (!opts.ignoreEmpty && !opts.ignoreNull) {
+  if (!opts.ignoreEmpty) {
     for (var column in t.columns) {
-      if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && data[column] == null) {
+      if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && (data[column] == null || opts.notNullNotEmpty && data[column] === '')) {
         violated.push(column + '_not_null')
         if (!opts.checkAll) {
           return {error: 'constraint_violated', violated: violated} 
