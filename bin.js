@@ -11,11 +11,12 @@ var args = require('yargs')
     .alias('h', 'client.host')
     .alias('d', 'client.database')
     .alias('t', 'tables')
-    .array('in')
+    .array('file')
+    .alias('f', 'file')
     .argv
 
-if (args.in) {
-    args.sql = args.in.map(i => fs.readFileSync(f(i), 'utf8'))
+if (args.file) {
+    args.sql = args.file.map(i => fs.readFileSync(f(i), 'utf8'))
 }
 
 var cb = (err, res) => {
@@ -23,7 +24,9 @@ var cb = (err, res) => {
         throw err
     }
     if (args.out) {
-        fs.writeFileSync(f(args.out), res)
+        let absPath = f(args.out)
+        fs.writeFileSync(abspath, res)
+        console.log(`Wrote schema to ${abspath}`)
     }
     else {
         console.log(res)
