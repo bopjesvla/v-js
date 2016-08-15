@@ -35,7 +35,11 @@ v.default = v
 
 v.createModule = function(vs, opts) {
   opts = opts || {}
-  var mod = template.replace('$v', toString(vs))
+  var mod = `var Schema = require('v-js/schema')
+  var schema = new Schema(${toString(vs)})
+
+  module.exports = schema
+  module.exports.default = schema`
 
   if (opts.fn !== false) {
     mod += `\n\nschema.functions(require('${opts.fn || 'v-js/fn'}'))`

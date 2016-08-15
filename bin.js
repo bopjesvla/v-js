@@ -26,7 +26,7 @@ var cb = (err, res) => {
     if (args.out) {
         var absPath = f(args.out)
         fs.writeFileSync(absPath, res)
-        console.log(`Wrote schema to ${absPath}}`)
+        console.log(`Wrote schema to ${absPath}`)
     }
     else {
         console.log(res)
