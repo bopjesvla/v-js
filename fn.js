@@ -8,4 +8,7 @@ module.exports = {
     version: function() {
         return 'v.js'
     },
+    strpos: function(str, substr) {
+        return str.indexOf ? str.indexOf(substr) : NaN
+    }
 }
