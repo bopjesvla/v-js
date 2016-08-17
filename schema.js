@@ -145,3 +145,13 @@ Schema.prototype.validate = function(table, data, opts) {
 
   return {success: true}
 }
+
+Schema.prototype.assert = function() {
+  var v = this.validate.apply(this, arguments)
+  if (v.error) {
+    var name = v.violated ? v.error + ': ' + v.violated.join(', ') : v.error
+    var e = new Error(name)
+    extend(e, v)
+    throw e
+  }
+}
