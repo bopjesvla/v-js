@@ -35,7 +35,7 @@ Schema.prototype.defaults = function(table_name, column, data) {
   if (!t.defaults) {
     t.defaults = function(r) {
       var defaults = {}
-      for (column in t.columns) {
+      for (var column in t.columns) {
         if (t.columns[column].default) {
           defaults[column] = t.columns[column].default(r, this.helpers)
         }
@@ -83,7 +83,7 @@ Schema.prototype.validate = function(table, data, opts) {
   }
 
   if (opts.ignoreEmpty) {
-    for (column in t.columns) {
+    for (var column in t.columns) {
       if (data[column] == null || data[column] === '') {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
@@ -94,7 +94,7 @@ Schema.prototype.validate = function(table, data, opts) {
   }
 
   if (opts.columns) {
-    for (column in t.columns) {
+    for (var column in t.columns) {
       if (opts.columns.indexOf(column) == -1) {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
