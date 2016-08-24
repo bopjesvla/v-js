@@ -40,6 +40,7 @@ Schema.prototype.defaults = function(table_name, column, data) {
           defaults[column] = t.columns[column].default(r, this.helpers)
         }
       }
+      return defaults
     }
   }
   return t.defaults(data)

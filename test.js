@@ -20,6 +20,7 @@ var mod = v({client, sql: 'create table cool(a text not null)', tables: {
   try {
     schema.assert('cool', {})
   } catch (e) {
-    console.log(e.violated)
+    console.log(e.violate)
   }
+  console.log(schema.defaults('users'))
 })
