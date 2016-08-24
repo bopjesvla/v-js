@@ -106,8 +106,7 @@ Schema.prototype.validate = function(table, data, opts) {
 
   if (!opts.ignoreDefaults) {
     var defaults = this.defaults(table, void 0, data)
-    data = extend({}, data)
-    extend(data, defaults)
+    data = extend(defaults, data)
   }
 
 

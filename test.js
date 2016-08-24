@@ -16,7 +16,7 @@ var mod = v({client, sql: 'create table cool(a text not null)', tables: {
 }}, (err, res) => {
   eval(res.replace(/v-js/g, '.'))
   var schema = module.exports
-  console.log(schema.validate('users', {email: 'a@a', password: null}, {ignoreEmpty: true, ignoreUnknown: true}))
+  console.log(schema.validate('users', {email: 'a@a', password: '1234567'}, {}))
   try {
     schema.assert('cool', {})
   } catch (e) {
