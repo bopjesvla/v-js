@@ -32,18 +32,13 @@ Schema.prototype.defaults = function(table_name, column, data) {
       return t.defaults(data).column
     }
   }
-  if (!t.defaults) {
-    t.defaults = function(r) {
-      var defaults = {}
-      for (column in t.columns) {
-        if (t.columns[column].default) {
-          defaults[column] = t.columns[column].default(r, this.helpers)
-        }
-      }
-      return defaults
+  var defaults = t.defaults ? t.defaults(data) : {}
+  for (column in t.columns) {
+    if (!(column in defaults)) {
+      defaults[column] = t.columns[column].default ? t.columns[column].default(data, this.helpers) : undefined
     }
   }
-  return extend({}, t.defaults(data)) // alasql defaults don't play nice with vue.js for some reason
+  return defaults
 }
 Schema.prototype.validateCheckConstraint = function(constraint, data) {
   if (this.v.checks[constraint]) {
