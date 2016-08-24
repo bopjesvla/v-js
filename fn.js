@@ -6,7 +6,7 @@ module.exports = {
         return 1
     },
     version: function() {
-        return 'v.js'
+        return 'app'
     },
     strpos: function(str, substr) {
         return str.indexOf ? str.indexOf(substr) : NaN
