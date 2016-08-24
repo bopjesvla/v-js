@@ -35,7 +35,7 @@ Schema.prototype.defaults = function(table_name, column, data) {
   if (!t.defaults) {
     t.defaults = function(r) {
       var defaults = {}
-      for (var column in t.columns) {
+      for (column in t.columns) {
         if (t.columns[column].default) {
           defaults[column] = t.columns[column].default(r, this.helpers)
         }
@@ -43,7 +43,7 @@ Schema.prototype.defaults = function(table_name, column, data) {
       return defaults
     }
   }
-  return t.defaults(data)
+  return extend({}, t.defaults(data)) // alasql defaults don't play nice with vue.js for some reason
 }
 Schema.prototype.validateCheckConstraint = function(constraint, data) {
   if (this.v.checks[constraint]) {
@@ -83,7 +83,7 @@ Schema.prototype.validate = function(table, data, opts) {
   }
 
   if (opts.ignoreEmpty) {
-    for (var column in t.columns) {
+    for (column in t.columns) {
       if (data[column] == null || data[column] === '') {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
@@ -94,7 +94,7 @@ Schema.prototype.validate = function(table, data, opts) {
   }
 
   if (opts.columns) {
-    for (var column in t.columns) {
+    for (column in t.columns) {
       if (opts.columns.indexOf(column) == -1) {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
