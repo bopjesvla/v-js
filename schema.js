@@ -6,6 +6,11 @@ var extend = helpers.utils.extend, merge = function(a, b) {
   return c
 }
 
+var Table = module.exports.Table = function(schema, name) {
+  this.schema = schema
+  this.name = name
+}
+
 var Schema = module.exports = function(v, opts) {
   v = [].concat(v)
   this.v = {checks: {}, tables: {}}
@@ -15,6 +20,10 @@ var Schema = module.exports = function(v, opts) {
   this.helpers = extend({}, helpers)
   this.helpers.fn = {}
   this.opts = opts || {}
+
+  return function(tableName) {
+    return new Table(this, tableName)
+  }
 }
 Schema.prototype.functions = function(fns) {
   extend(this.helpers.fn, fns)
@@ -24,6 +33,10 @@ Schema.prototype.options = function(opts) {
 }
 Schema.prototype.defaults = function(table_name, column, data) {
   var t = this.v.tables[table_name]
+  if (typeof column != 'string') {
+    data = column
+    column = null
+  }
   if (column) {
     if (t.columns[column].default) {
       return t.columns[column].default(data, this.helpers)
@@ -60,7 +73,7 @@ Schema.prototype.validate = function(table, data, opts) {
   if (!t) {
     return {error: 'table_missing'}
   }
-  if (!opts.ignoreUnknown) {
+  if (!opts.unknown) {
     for (var field in data) {
       if (!t.columns[field]) {
         return {error: 'unknown_field', violated: [field]}
@@ -77,7 +90,7 @@ Schema.prototype.validate = function(table, data, opts) {
     checkobj = opts.checks
   }
 
-  if (opts.ignoreEmpty) {
+  if (opts.empty) {
     for (column in t.columns) {
       if (data[column] == null || data[column] === '') {
         var checks = t.columns[column].checks
@@ -99,7 +112,7 @@ Schema.prototype.validate = function(table, data, opts) {
     }
   }
 
-  if (!opts.ignoreDefaults) {
+  if (opts.defaults !== false) {
     var defaults = this.defaults(table, void 0, data)
     data = extend(defaults, data)
   }
@@ -107,7 +120,7 @@ Schema.prototype.validate = function(table, data, opts) {
 
   var violated = []
 
-  if (!opts.ignoreEmpty) {
+  if (!opts.empty) {
     for (var column in t.columns) {
       if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && (data[column] == null || opts.notNullNotEmpty && data[column] === '')) {
         violated.push(column + '_not_null')
@@ -150,3 +163,13 @@ Schema.prototype.assert = function() {
     throw e
   }
 }
+
+var addTableMethod = function(methodName) {
+  Table.prototype[methodName] = function(a1, a2, a3) {
+    this.schema[methodName](this.name, a1, a2, a3)
+  }
+}
+
+addTableMethod('defaults')
+addTableMethod('validate')
+addTableMethod('assert')
