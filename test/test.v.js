@@ -2,18 +2,23 @@ var Schema = require('v-js/schema')
   var schema = new Schema([
     {
         tables: {
-            attributes: {
+            check_constraints: {
                 columns: {
-                    numeric_precision: {
+                    check_clause: {
                         default: function anonymous(r,alasql,params
 /**/) {
 var y; return undefined
 },
                         notnull: false,
-                        checks: [
-                            "numeric_precision_cardinal_number_domain_check"
-                        ]
-                    },
+                        checks: null
+                    }
+                },
+                checks: [
+
+                ]
+            },
+            attributes: {
+                columns: {
                     is_nullable: {
                         default: function anonymous(r,alasql,params
 /**/) {
@@ -22,6 +27,16 @@ var y; return undefined
                         notnull: false,
                         checks: [
                             "is_nullable_yes_or_no_check"
+                        ]
+                    },
+                    numeric_precision: {
+                        default: function anonymous(r,alasql,params
+/**/) {
+var y; return undefined
+},
+                        notnull: false,
+                        checks: [
+                            "numeric_precision_cardinal_number_domain_check"
                         ]
                     }
                 },
