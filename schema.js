@@ -65,9 +65,9 @@ Table.prototype.defaults = function(column, data) {
     }
   }
   var defaults = t.defaults ? t.defaults(data) : {}
-  for (column in t.columns) {
+  for (var column in t.columns) {
     if (!(column in defaults)) {
-      defaults[column] = t.columns[column].default ? t.columns[column].default(data, this.helpers) : null
+      defaults[column] = t.columns[column].default ? t.columns[column].default(data, this.helpers) : void 0
     }
   }
   return defaults
@@ -93,13 +93,18 @@ Table.prototype.validate = function(data, opts) {
   if (Array.isArray(opts.checks)) {
     checklist = opts.checks
   }
-  else if (typeof opts.checks == 'object') {
+  else if (opts.checks != null) {
     checkobj = opts.checks
   }
 
-  if (opts.empty === false) {
-    for (column in t.columns) {
-      if (data[column] == null || data[column] === '') {
+  if (opts.defaults !== false) {
+    var defaults = this.defaults(data)
+    data = extend(defaults, data)
+  }
+
+  if (opts.partial) {
+    for (var column in t.columns) {
+      if (data[column] == null) {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
           checkobj[checks[i]] = false
@@ -109,7 +114,7 @@ Table.prototype.validate = function(data, opts) {
   }
 
   if (opts.columns) {
-    for (column in t.columns) {
+    for (var column in t.columns) {
       if (opts.columns.indexOf(column) == -1) {
         var checks = t.columns[column].checks
         for (var i = 0; i < checks.length; i++) {
@@ -119,17 +124,12 @@ Table.prototype.validate = function(data, opts) {
     }
   }
 
-  if (opts.defaults !== false) {
-    var defaults = this.defaults(void 0, data)
-    data = extend(defaults, data)
-  }
-
 
   var violated = []
 
-  if (opts.empty === false) {
+  if (!opts.partial && opts.notnull !== false) {
     for (var column in t.columns) {
-      if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && (data[column] == null || opts.notNullNotEmpty && data[column] === '')) {
+      if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && data[column] == null) {
         violated.push(column + '_not_null')
         if (!opts.checkAll) {
           return {error: 'constraint_violated', violated: violated} 
@@ -145,11 +145,14 @@ Table.prototype.validate = function(data, opts) {
       return {error: 'constraint_missing', constraint: check_name}
     }
 
-    if (checkobj[check_name] !== false && !check(data, this.helpers)) {
-      violated.push(check_name)
+    if (checkobj[check_name] !== false) {
+      var result = check(data, this.helpers)
+      if (result !== true && result != null) {
+        violated.push(check_name)
 
-      if (!opts.checkAll) {
-        return {error: 'constraint_violated', violated: violated} 
+        if (!opts.checkAll) {
+          return {error: 'constraint_violated', violated: violated} 
+        }
       }
     }
   }

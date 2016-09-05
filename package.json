@@ -1,11 +1,11 @@
 {
   "name": "v-js",
   "version": "0.7.0",
-  "description": "",
+  "description": "SQL table definitions -> JavaScript data validators",
   "main": "index.js",
   "bin": "bin.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cd test && v-js -U postgres -d SLAPTCHA --schema information_schema -t.attributes is_nullable,numeric_precision -f appschema.sql --out test.v.js && node .",
     "dump": "pg_dump -U postgres -h localhost -p 5433"
   },
   "repository": {
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/bopjesvla/v.js#readme",
   "dependencies": {
-    "alasql": "^0.3.1",
+    "alasql": "bopjesvla/alasql",
     "js-object-pretty-print": "^0.2.0",
     "pg": "^6.0.3",
     "yargs": "^4.8.1"

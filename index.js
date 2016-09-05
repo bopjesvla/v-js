@@ -1,4 +1,4 @@
-var alasql = require('alasql')
+var alasql = require('../alasql')
 var fs = require('fs')
 var path = require('path')
 
@@ -169,7 +169,7 @@ v.fromPG = function(opts, cb) {
         checks: column.checks
       }
     }
-    for (var table of res[0].tables) {
+    for (var table of res[0].tables || []) {
       tables[table.table_name].checks = table.checks
     }
     for (var check in res[0].checks) {
