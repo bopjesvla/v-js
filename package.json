@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": "bin.js",
   "scripts": {
-    "test": "cd test && v-js -U postgres -d SLAPTCHA --schema information_schema -t.attributes is_nullable,numeric_precision -f appschema.sql --out test.v.js && node .",
+    "test": "cd test && v-js -U postgres -d SLAPTCHA --schema information_schema -t.attributes is_nullable,numeric_precision -t.check_constraints check_clause -f appschema.sql --out test.v.js && node .",
     "dump": "pg_dump -U postgres -h localhost -p 5433"
   },
   "repository": {
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/bopjesvla/v.js#readme",
   "dependencies": {
-    "alasql": "bopjesvla/alasql",
+    "alasql": "bopjesvla/alasql#develop",
     "js-object-pretty-print": "^0.2.0",
     "pg": "^6.0.3",
     "yargs": "^4.8.1"
