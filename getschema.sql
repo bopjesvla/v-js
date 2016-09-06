@@ -9,13 +9,13 @@ column_constraints as (
 	using(table_schema, table_name, constraint_name, constraint_schema)
 	inner join information_schema.check_constraints -- ditch non-check constraints, add check expression
 	using(constraint_schema, constraint_name)
-	union all
-	select table_schema, table_name, column_name, format('%s_%s', column_name, constraint_name) as constraint_name,
-		constraint_schema, replace(check_clause, 'VALUE', column_name) as check_clause from information_schema.column_domain_usage
-	full outer join information_schema.domain_constraints
-	using(domain_name, domain_schema, domain_catalog)
-	inner join information_schema.check_constraints -- ditch non-check constraints, add check expression
-	using(constraint_schema, constraint_name)
+	-- union all
+	-- select table_schema, table_name, column_name, format('%s_%s', column_name, constraint_name) as constraint_name,
+		-- constraint_schema, replace(check_clause, 'VALUE', column_name) as check_clause from information_schema.column_domain_usage
+	-- full outer join information_schema.domain_constraints
+	-- using(domain_name, domain_schema, domain_catalog)
+	-- inner join information_schema.check_constraints -- ditch non-check constraints, add check expression
+	-- using(constraint_schema, constraint_name)
 ),
 joined as (
 	select * from requested_columns
@@ -28,18 +28,35 @@ joined as (
 	)
 ), 
 by_column as (
-	select table_name, column_name, array_agg(constraint_name::text) filter (where constraint_name is not null) checks, is_nullable, column_default from joined
-	group by table_name, column_name, is_nullable, column_default	
+	select table_name, column_name, domain_name, array_agg(constraint_name::text) filter (where constraint_name is not null) checks, is_nullable, column_default from joined
+	group by table_name, column_name, is_nullable, column_default, domain_name
 ),
 by_table as (
 	select table_name, array_agg(distinct constraint_name::text) checks from joined
 	where constraint_name is not null
 	group by table_name
 ),
+domains as (
+	select domain_name, domain_default, constraint_name, check_clause from requested_columns
+	right join information_schema.domains
+	using(domain_name)
+	left join information_schema.domain_constraints
+	using(domain_name)
+	inner join information_schema.check_constraints
+	using(constraint_name)
+),
+by_domain as (
+	select domain_name, domain_default, array_agg(constraint_name::text) checks from domains
+	group by domain_name, domain_default
+),
 check_constraints as (
-	select distinct constraint_name, check_clause from joined where constraint_name is not null
+	select distinct * from (
+		select constraint_name, check_clause from joined union all select constraint_name, check_clause from domains
+	) a
+	where constraint_name is not null
 )
 select
 (select json_agg(c.*) from by_column c) as columns,
+(select json_agg(c.*) from by_domain c) as domains,
 (select json_agg(c.*) from by_table c) as tables,
 (select json_object(array_agg(constraint_name::text), array_agg(check_clause::text)) from check_constraints) as checks

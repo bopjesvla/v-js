@@ -16,6 +16,5 @@ var attrs = schema('attributes')
 
 assert(attrs.validate({is_nullable: 'YES', numeric_precision: 5}), success)
 assert.deepEqual(attrs.validate({is_nullable: 'YES', numeric_precision: -5}), violated('numeric_precision_cardinal_number_domain_check'))
-assert.deepEqual(attrs.validate({is_nullable: 'YES', numeric_precision: -5}, {checks: {numeric_precision_cardinal_number_domain_check: false}}), success)
-assert.deepEqual(attrs.validate({is_nullable: 'YES', numeric_precision: -5}, {checks: ['is_nullable_yes_or_no_check']}), success)
+assert.deepEqual(attrs.validate({is_nullable: 'YEAH', numeric_precision: 5}), violated('is_nullable_yes_or_no_check'))
 

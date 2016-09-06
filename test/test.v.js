@@ -2,6 +2,31 @@ var Schema = require('v-js/schema')
   var schema = new Schema([
     {
         tables: {
+            attributes: {
+                columns: {
+                    numeric_precision: {
+                        default: function anonymous(r,alasql,params
+/**/) {
+var y; return undefined
+},
+                        notnull: false,
+                        checks: null,
+                        domain: "cardinal_number"
+                    },
+                    is_nullable: {
+                        default: function anonymous(r,alasql,params
+/**/) {
+var y; return undefined
+},
+                        notnull: false,
+                        checks: null,
+                        domain: "yes_or_no"
+                    }
+                },
+                checks: [
+
+                ]
+            },
             check_constraints: {
                 columns: {
                     check_clause: {
@@ -10,51 +35,44 @@ var Schema = require('v-js/schema')
 var y; return undefined
 },
                         notnull: false,
-                        checks: null
+                        checks: null,
+                        domain: "character_data"
                     }
                 },
                 checks: [
 
                 ]
-            },
-            attributes: {
-                columns: {
-                    is_nullable: {
-                        default: function anonymous(r,alasql,params
-/**/) {
-var y; return undefined
-},
-                        notnull: false,
-                        checks: [
-                            "is_nullable_yes_or_no_check"
-                        ]
-                    },
-                    numeric_precision: {
-                        default: function anonymous(r,alasql,params
-/**/) {
-var y; return undefined
-},
-                        notnull: false,
-                        checks: [
-                            "numeric_precision_cardinal_number_domain_check"
-                        ]
-                    }
-                },
-                checks: [
-                    "is_nullable_yes_or_no_check",
-                    "numeric_precision_cardinal_number_domain_check"
-                ]
             }
         },
         checks: {
-            numeric_precision_cardinal_number_domain_check: function anonymous(r,alasql,params
+            yes_or_no_check: function anonymous(r,alasql,params
 /**/) {
-var y; return (((y=[(r['numeric_precision']), (0)], y.some(function(e){return e === void 0}) ? void 0 : (y[0]>=y[1]))))
+var y; return (((y=[(alasql.stdfn.CONVERT(([(alasql.stdfn.CONVERT('YES',{dbtypeid:"character varying",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT('NO',{dbtypeid:"character varying",dbsize:undefined,style:undefined}))]),{dbtypeid:"text[[]]",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT((r),{dbtypeid:"text",dbsize:undefined,style:undefined}))], y.some(function(e){return e === void 0}) ? void 0 : y[0].some(function(b){return (y[1])===b}))))
 },
-            is_nullable_yes_or_no_check: function anonymous(r,alasql,params
+            cardinal_number_domain_check: function anonymous(r,alasql,params
 /**/) {
-var y; return (((y=[(alasql.stdfn.CONVERT(([(alasql.stdfn.CONVERT('YES',{dbtypeid:"character varying",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT('NO',{dbtypeid:"character varying",dbsize:undefined,style:undefined}))]),{dbtypeid:"text[[]]",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT((r['is_nullable']),{dbtypeid:"text",dbsize:undefined,style:undefined}))], y.some(function(e){return e === void 0}) ? void 0 : y[0].some(function(b){return (y[1])===b}))))
+var y; return (((y=[(r), (0)], y.some(function(e){return e === void 0}) ? void 0 : (y[0]>=y[1]))))
 }
+        },
+        domains: {
+            yes_or_no: {
+                checks: [
+                    "yes_or_no_check"
+                ],
+                default: function anonymous(r,alasql,params
+/**/) {
+var y; return undefined
+}
+            },
+            cardinal_number: {
+                checks: [
+                    "cardinal_number_domain_check"
+                ],
+                default: function anonymous(r,alasql,params
+/**/) {
+var y; return undefined
+}
+            }
         }
     },
     {
@@ -65,7 +83,8 @@ var y; return (((y=[(alasql.stdfn.CONVERT(([(alasql.stdfn.CONVERT('YES',{dbtypei
                         notnull: false,
                         checks: [
                             "is_c"
-                        ]
+                        ],
+                        type: "TEXT"
                     }
                 },
                 checks: [

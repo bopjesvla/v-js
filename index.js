@@ -84,7 +84,8 @@ v.fromSQL = function(sql) {
     for (var column of t.columns) {
       columns[column.columnid] = {
         notnull: !!column.notnull,
-        checks: []
+        checks: [],
+        type: column.dbtypeid
       }
     }
     for (var check of t.checks) {
@@ -128,7 +129,7 @@ v.fromPG = function(opts, cb) {
     return 
   }
   var where = `table_schema = '${opts.schema || 'public'}'`
-  var tables = {}, checks = {}
+  var tables = {}, checks = {}, domains = {}
   if (opts.tables) {
     where += ` and (`
     var tablenames = Array.isArray(opts.tables) ? opts.tables : Object.keys(opts.tables)
@@ -166,7 +167,14 @@ v.fromPG = function(opts, cb) {
       tables[tablename].columns[column.column_name] = {
         default: v.SQLExprToFunction(column.column_default),
         notnull: column.is_nullable == 'NO',
-        checks: column.checks
+        checks: column.checks,
+        domain: column.domain_name
+      }
+    }
+    for (var domain of res[0].domains) {
+      domains[domain.domain_name] = {
+        checks: domain.checks,
+        default: v.SQLExprToFunction(domain.domain_default),
       }
     }
     for (var table of res[0].tables || []) {
@@ -175,6 +183,6 @@ v.fromPG = function(opts, cb) {
     for (var check in res[0].checks) {
       checks[check] = v.SQLExprToFunction(res[0].checks[check])
     }
-    cb(void 0, {tables, checks})
+    cb(void 0, {tables, checks, domains})
   })
 }

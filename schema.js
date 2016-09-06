@@ -18,7 +18,7 @@ var Schema = module.exports = function(schemas, opts) {
   var schemaHelpers = extend({}, helpers)
   schemaHelpers.fn = {}
   opts = opts || {}
-  var schema = {checks: {}, tables: {}}
+  var schema = {checks: {}, tables: {}, domains: {}}
 
   var self = function(tableName) {
     return new Table(schema, tableName, opts, schemaHelpers)
@@ -27,6 +27,7 @@ var Schema = module.exports = function(schemas, opts) {
   self.extend = function(newschema) {
     extend(schema.checks, newschema.checks)
     extend(schema.tables, newschema.tables)
+    extend(schema.domains, newschema.domains)
   }
 
   for (var i = 0; i < schemas.length; i++) {
@@ -64,11 +65,26 @@ Table.prototype.defaults = function(column, data) {
       return t.defaults(data).column
     }
   }
-  var defaults = t.defaults ? t.defaults(data) : {}
-  for (var column in t.columns) {
-    if (!(column in defaults)) {
-      defaults[column] = t.columns[column].default ? t.columns[column].default(data, this.helpers) : void 0
+  if (t.defaults) {
+    var defaults = t.defaults(data, this.helpers)
+    for (var column in t.columns) {
+      if (!(column in defaults)) {
+        defaults[column] = void 0
+      }
     }
+    return defaults
+  }
+  var defaults = {}
+  for (var column in t.columns) {
+    if (t.columns[column].default) {
+      defaults[column] = t.columns[column].default(data, this.helpers)
+    }
+    else {
+      var domain = t.columns[column].domain
+      console.log(t.columns[column])
+      defaults[column] = domain && this.schema.domains[domain].default ? this.schema.domains[domain].default(data, this.helpers) : void 0
+    }
+
   }
   return defaults
 }
@@ -152,6 +168,31 @@ Table.prototype.validate = function(data, opts) {
 
         if (!opts.checkAll) {
           return {error: 'constraint_violated', violated: violated} 
+        }
+      }
+    }
+  }
+
+  if (opts.domains !== false) {
+    for (var column in t.columns) {
+      var domain = t.columns[column].domain
+      if (domain) {
+        for (var i = 0; i < this.schema.domains[domain].checks.length; i++) {
+          var check_name = this.schema.domains[domain].checks[i], check = this.schema.checks[check_name]
+          
+          if (!check) {
+            return {error: 'constraint_missing', constraint: check_name}
+          }
+
+          var result = check(data[column], this.helpers)
+          if (result !== true && result != null) {
+            violated.push(column + '_' + check_name)
+
+            if (!opts.checkAll) {
+              return {error: 'constraint_violated', violated: violated} 
+            }
+          }
+
         }
       }
     }
