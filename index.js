@@ -4,7 +4,6 @@ var path = require('path')
 
 var f = path.join.bind(path, __dirname)
 
-var template = fs.readFileSync(f('./output-template.js'), 'utf8')
 var pretty = require('js-object-pretty-print').pretty
 var toString = x => pretty(x, void 0, void 0, true)
 
@@ -37,6 +36,7 @@ v.createModule = function(vs, opts) {
   opts = opts || {}
   var mod = `var Schema = require('v-js/schema')
   var schema = new Schema(${toString(vs)})
+  var alasql = schema.helpers
 
   module.exports = schema
   module.exports.default = schema`

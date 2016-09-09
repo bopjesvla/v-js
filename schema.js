@@ -24,6 +24,8 @@ var Schema = module.exports = function(schemas, opts) {
     return new Table(schema, tableName, opts, schemaHelpers)
   }
 
+  self.helpers = schemaHelpers
+
   self.extend = function(newschema) {
     extend(schema.checks, newschema.checks)
     extend(schema.tables, newschema.tables)

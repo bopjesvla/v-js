@@ -120,10 +120,17 @@ var y; return undefined
 
                         ],
                         type: "TEXT"
+                    },
+                    tagline: {
+                        notnull: false,
+                        checks: [
+                            "users_tagline_3"
+                        ],
+                        type: "TEXT"
                     }
                 },
                 checks: [
-
+                    "users_tagline_3"
                 ],
                 defaults: function anonymous(r,alasql
 /**/) {
@@ -135,11 +142,16 @@ return {'id':alasql.fn.nextval('seq')}
             is_c: function anonymous(r
 /**/) {
 var y;return (y=[(r['a']), ('c')], y.some(function(e){return e === void 0}) ? void 0 : (y[0]===y[1]))
+},
+            users_tagline_3: function anonymous(r
+/**/) {
+var y;return (y=[(alasql.fn.char_length(r['tagline'])), (6)], y.some(function(e){return e === void 0}) ? void 0 : (y[0]>y[1]))
 }
         }
     }
 ]
 )
+  var alasql = schema.helpers
 
   module.exports = schema
   module.exports.default = schema
