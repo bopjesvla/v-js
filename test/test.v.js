@@ -90,6 +90,45 @@ var y; return undefined
                 checks: [
                     "is_c"
                 ]
+            },
+            users: {
+                columns: {
+                    id: {
+                        notnull: true,
+                        checks: [
+
+                        ],
+                        type: "INT"
+                    },
+                    virtue: {
+                        notnull: false,
+                        checks: [
+
+                        ],
+                        type: "FLOAT"
+                    },
+                    email: {
+                        notnull: true,
+                        checks: [
+
+                        ],
+                        type: "TEXT"
+                    },
+                    password: {
+                        notnull: true,
+                        checks: [
+
+                        ],
+                        type: "TEXT"
+                    }
+                },
+                checks: [
+
+                ],
+                defaults: function anonymous(r,alasql
+/**/) {
+return {'id':alasql.fn.nextval('seq')}
+}
             }
         },
         checks: {

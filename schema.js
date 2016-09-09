@@ -81,7 +81,6 @@ Table.prototype.defaults = function(column, data) {
     }
     else {
       var domain = t.columns[column].domain
-      console.log(t.columns[column])
       defaults[column] = domain && this.schema.domains[domain].default ? this.schema.domains[domain].default(data, this.helpers) : void 0
     }
 
