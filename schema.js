@@ -224,7 +224,7 @@ Table.prototype.validate = function(data, opts) {
 Table.prototype.assert = function() {
   var v = this.validate.apply(this, arguments)
   if (v.error) {
-    var name = v.violated ? v.error + ': ' + v.violated.join(', ') : v.error
+    var name = v.violated ? v.error + ': ' + v.violated.map(v => v.name + ' by ' + v.columns.join(', ')).join(', ') : v.error
     var e = new Error(name)
     extend(e, v)
     throw e
