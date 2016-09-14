@@ -3,7 +3,7 @@ var fn = module.exports = {
         return typeof x == 'string' ? x.length : void 0
     },
     length: function(x) {
-        return x && x.length ? x.length : void 0
+        return x != null ? x.length : void 0
     },
     nextval: function(seq) {
         return 1

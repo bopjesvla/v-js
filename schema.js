@@ -29,6 +29,23 @@ var Schema = module.exports = function(schemas, opts) {
   self.extend = function(newschema) {
     extend(schema.checks, newschema.checks)
     extend(schema.tables, newschema.tables)
+
+    for (var table in newschema.tables || {}) {
+      var t = schema.tables[table], checks = {}
+      for (var c = 0; c < t.checks.length; c++) {
+        var check = t.checks[c]
+        checks[check] = []
+      }
+      for (var column in t.columns) {
+        var col = t.columns[column]
+        for (var c = 0; c < (col.checks || []).length; c++) {
+          var check = col.checks[c]
+          checks[check].push(column)
+        }
+      }
+      t.checks = checks
+    }
+
     extend(schema.domains, newschema.domains)
   }
 
@@ -59,6 +76,7 @@ Table.prototype.defaults = function(column, data) {
     data = column
     column = null
   }
+  data = data || {}
   if (column) {
     if (t.columns[column].default) {
       return t.columns[column].default(data, this.helpers)
@@ -89,23 +107,30 @@ Table.prototype.defaults = function(column, data) {
   }
   return defaults
 }
+Table.prototype.e = function(error, violated) {
+  var e = {error: error, table: this.name}
+  if (violated) {
+    e.violated = Array.isArray(violated) ? violated : [violated]
+  }
+  return e
+}
 Table.prototype.validate = function(data, opts) {
   var t = this.schema.tables[this.name]
 
   opts = merge(this.opts, opts || {}) 
 
   if (!t) {
-    return {error: 'table_missing'}
+    return this.e('table_missing')
   }
   if (opts.unknown !== false) {
     for (var field in data) {
       if (!t.columns[field]) {
-        return {error: 'unknown_field', violated: [field]}
+        return this.e('unknown_field', field)
       }
     }
   }
 
-  var checklist = t.checks, checkobj = {}
+  var checklist = Object.keys(t.checks), checkobj = {}
 
   if (Array.isArray(opts.checks)) {
     checklist = opts.checks
@@ -145,12 +170,10 @@ Table.prototype.validate = function(data, opts) {
   var violated = []
 
   if (!opts.partial && opts.notnull !== false) {
-    for (var column in t.columns) {
-      if ((!opts.columns || opts.columns.indexOf(column) > -1) && t.columns[column].notnull && data[column] == null) {
-        violated.push(column + '_not_null')
-        if (!opts.checkAll) {
-          return {error: 'constraint_violated', violated: violated} 
-        }
+    for (var c in t.columns) {
+      var column = t.columns[c]
+      if ((!opts.columns || opts.columns.indexOf(c) > -1) && column.notnull && data[c] == null) {
+        violated.push({name: 'not_null', columns: [c]})
       }
     }
   }
@@ -165,11 +188,7 @@ Table.prototype.validate = function(data, opts) {
     if (checkobj[check_name] !== false) {
       var result = check(data, this.helpers)
       if (result !== true && result != null) {
-        violated.push(check_name)
-
-        if (!opts.checkAll) {
-          return {error: 'constraint_violated', violated: violated} 
-        }
+        violated.push({name: check_name, columns: t.checks[check_name] || []})
       }
     }
   }
@@ -187,11 +206,7 @@ Table.prototype.validate = function(data, opts) {
 
           var result = check(data[column], this.helpers)
           if (result !== true && result != null) {
-            violated.push(column + '_' + check_name)
-
-            if (!opts.checkAll) {
-              return {error: 'constraint_violated', violated: violated} 
-            }
+            violated.push({name: check_name, columns: [column]})
           }
 
         }
@@ -200,7 +215,7 @@ Table.prototype.validate = function(data, opts) {
   }
 
   if (violated.length) {
-    return {error: 'constraint_violated', violated: violated} 
+    return this.e('constraint_violated', violated)
   }
 
   return {success: true}
