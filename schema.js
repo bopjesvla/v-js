@@ -233,8 +233,8 @@ Table.prototype.assert = function() {
   if (v.error == 'constraint_violated') {
     e = new Error(v.error + ': ' + v.violated.map(v => v.name + ' by ' + v.columns.join(', ')).join(', '))
   }
-  else {
-    e = new Error(v.error + ': ' + v.violated ? v.violated.join(', ') : '')
+  else if (!v.success) {
+    e = new Error(v.error + (v.violated ? ': ' + v.violated.join(', ') : ''))
   }
 
   extend(e, v)
