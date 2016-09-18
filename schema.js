@@ -237,8 +237,10 @@ Table.prototype.assert = function() {
     e = new Error(v.error + (v.violated ? ': ' + v.violated.join(', ') : ''))
   }
 
-  extend(e, v)
-  throw e
+  if (!v.success) {
+    extend(e, v)
+    throw e
+  }
 }
 
 module.exports.Table = Table
