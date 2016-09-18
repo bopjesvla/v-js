@@ -122,11 +122,18 @@ Table.prototype.validate = function(data, opts) {
   if (!t) {
     return this.e('table_missing')
   }
+
   if (opts.unknown !== false) {
+    var unknown = []
+
     for (var field in data) {
       if (!t.columns[field]) {
-        return this.e('unknown_field', field)
+        unknown.push(field)
       }
+    }
+
+    if (unknown.length) {
+      return this.e('unknown_field', unknown)
     }
   }
 
@@ -222,15 +229,16 @@ Table.prototype.validate = function(data, opts) {
 }
 
 Table.prototype.assert = function() {
-  var v = this.validate.apply(this, arguments)
-  if (v.error) {
-    var name = v.violated ? v.error + ': ' + v.violated.map(v => {
-      return v.name + (v.columns ? ' by ' + v.columns.join(', ') : '')
-    }).join(', ') : v.error
-    var e = new Error(name)
-    extend(e, v)
-    throw e
+  var v = this.validate.apply(this, arguments), e
+  if (v.error == 'constraint_violated') {
+    e = new Error(v.error + ': ' + v.violated.map(v => v.name + ' by ' + v.columns.join(', ')).join(', '))
   }
+  else {
+    e = new Error(v.error + ': ' + v.violated ? v.violated.join(', ') : '')
+  }
+
+  extend(e, v)
+  throw e
 }
 
 module.exports.Table = Table
