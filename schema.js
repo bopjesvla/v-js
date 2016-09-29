@@ -231,7 +231,7 @@ Table.prototype.validate = function(data, opts) {
 Table.prototype.assert = function() {
   var v = this.validate.apply(this, arguments), e
   if (v.error == 'constraint_violated') {
-    e = new Error(v.error + ': ' + v.violated.map(v => v.name + ' by ' + v.columns.join(', ')).join(', '))
+    e = new Error(v.error + ': ' + v.violated.map(function(v) { return v.name + ' by ' + v.columns.join(', ') }).join(', '))
   }
   else if (!v.success) {
     e = new Error(v.error + (v.violated ? ': ' + v.violated.join(', ') : ''))

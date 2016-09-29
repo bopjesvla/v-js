@@ -16,6 +16,8 @@ assert(simple.validate({}, {partial: true}).success)
 assert.deepEqual(simple.validate({a: 'c', b: 'd'}), simple.e('unknown_field', 'b'))
 assert.deepEqual(simple.defaults(), {a: void 0})
 
+simple.assert({})
+
 assert.throws(_ => simple.assert({a: 'b'}), /constraint_violated: is_c by a/)
 
 var attrs = schema('attributes'), users = schema('users')
