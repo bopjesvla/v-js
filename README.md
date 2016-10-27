@@ -14,7 +14,7 @@ create table users (
 );
 ```
 
-Extract the `public` schema, transpile SQL to JavaScript using [alasql](https://github.com/agershun/alasql):
+Extract the `public` schema, transpile SQL to JavaScript:
 
 ```bash
 npm -g i v-js
@@ -48,12 +48,11 @@ v({
     detergents: ["name", "quantity"] // only include columns `name` and `quantity` and their constraints
   },
   
-  // While reading directly from a database is supported to a higher extent, v-js can also read primitive
-  // SQL table definitions. If you use multiple sources, v-js will combine everything into one
+  // v-js has basic support for directly reading SQL from a string. If you use multiple sources, v-js will combine everything into one
   // JavaScript schema.
   sql: "create table nothing_masters (user_id int)",
 }, function(res,err) {
-  // if no errors occurred, res is a String of JavaScript code
+  // if no errors occurred, res is a string of messy JavaScript
 })
 ```
 
