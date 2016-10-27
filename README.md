@@ -34,7 +34,7 @@ schema('users').validate({email: "Mors Ride", title: "hahahaha", virtue: -2})
 }]} */
 ```
 
-# Building
+## Building
 
 API interface:
 
@@ -69,7 +69,7 @@ Aliases are defined [here](https://github.com/bopjesvla/v-js/blob/master/bin.js)
 v-js -U surveillant_mohammed -p mhmm --schema wards -t.stimuli -t.detergents name,quantity -f nothing_masters.sql --out schema.v.js
 ```
 
-# Validating
+## Validating
 
 ```js
 var schema = require('./schema.v.js')
