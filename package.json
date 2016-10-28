@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/bopjesvla/v.js#readme",
   "dependencies": {
-    "alasql": "bopjesvla/alasql#value",
+    "alasql": "0.3.3",
     "js-object-pretty-print": "^0.2.0",
     "pg": "^6.0.3",
     "yargs": "^4.8.1"

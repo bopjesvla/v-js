@@ -47,11 +47,11 @@ var y; return undefined
         checks: {
             yes_or_no_check: function anonymous(r,alasql,params
 /**/) {
-var y; return (((y=[(alasql.stdfn.CONVERT(([(alasql.stdfn.CONVERT('YES',{dbtypeid:"character varying",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT('NO',{dbtypeid:"character varying",dbsize:undefined,style:undefined}))]),{dbtypeid:"text[[]]",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT((r),{dbtypeid:"text",dbsize:undefined,style:undefined}))], y.some(function(e){return e === void 0}) ? void 0 : y[0].some(function(b){return (y[1])===b}))))
+var y; return (((y=[(alasql.stdfn.CONVERT(([(alasql.stdfn.CONVERT('YES',{dbtypeid:"character varying",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT('NO',{dbtypeid:"character varying",dbsize:undefined,style:undefined}))]),{dbtypeid:"text[[]]",dbsize:undefined,style:undefined})), (alasql.stdfn.CONVERT((r),{dbtypeid:"text",dbsize:undefined,style:undefined}))], y.some(function(e){return e == null}) ? void 0 : y[0].some(function(b){return (y[1])===b}))))
 },
             cardinal_number_domain_check: function anonymous(r,alasql,params
 /**/) {
-var y; return (((y=[(r), (0)], y.some(function(e){return e === void 0}) ? void 0 : (y[0]>=y[1]))))
+var y; return (((y=[(r), (0)], y.some(function(e){return e == null}) ? void 0 : (y[0]>=y[1]))))
 }
         },
         domains: {
@@ -141,11 +141,11 @@ return {'id':alasql.fn.nextval('seq')}
         checks: {
             is_c: function anonymous(r
 /**/) {
-var y;return (y=[(r['a']), ('c')], y.some(function(e){return e === void 0}) ? void 0 : (y[0]===y[1]))
+var y;return (y=[(r['a']), ('c')], y.some(function(e){return e == null}) ? void 0 : (y[0]===y[1]))
 },
             users_tagline_3: function anonymous(r
 /**/) {
-var y;return (y=[(alasql.fn.char_length(r['tagline'])), (6)], y.some(function(e){return e === void 0}) ? void 0 : (y[0]>y[1]))
+var y;return (y=[(alasql.fn.char_length(r['tagline'])), (6)], y.some(function(e){return e == null}) ? void 0 : (y[0]>y[1]))
 }
         }
     }
