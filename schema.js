@@ -139,6 +139,8 @@ Table.prototype.validate = function(data, opts) {
 
   var checklist = Object.keys(t.checks), checkobj = {}
 
+  checklist.push("not_null")
+
   if (Array.isArray(opts.checks)) {
     checklist = opts.checks
   }
@@ -176,26 +178,31 @@ Table.prototype.validate = function(data, opts) {
 
   var violated = []
 
-  if (!opts.partial && opts.notnull !== false) {
-    for (var c in t.columns) {
-      var column = t.columns[c]
-      if ((!opts.columns || opts.columns.indexOf(c) > -1) && column.notnull && data[c] == null) {
-        violated.push({name: 'not_null', columns: [c]})
+  for (var i = 0; i < checklist.length; i++) {
+    var check_name = checklist[i]
+
+    if (check_name == "not_null") {
+      if (!opts.partial) {
+        for (var c in t.columns) {
+          var column = t.columns[c]
+          if ((!opts.columns || opts.columns.indexOf(c) > -1) && column.notnull && data[c] == null) {
+            violated.push({name: 'not_null', columns: [c]})
+          }
+        }
       }
     }
-  }
+    else {
+      var check = this.schema.checks[check_name]
 
-  for (var i = 0; i < checklist.length; i++) {
-    var check_name = checklist[i], check = this.schema.checks[check_name]
+      if (!check) {
+        return {error: 'constraint_missing', constraint: check_name}
+      }
 
-    if (!check) {
-      return {error: 'constraint_missing', constraint: check_name}
-    }
-
-    if (checkobj[check_name] !== false) {
-      var result = check(data, this.helpers)
-      if (result !== true && result != null) {
-        violated.push({name: check_name, columns: t.checks[check_name] || []})
+      if (checkobj[check_name] !== false) {
+        var result = check(data, this.helpers)
+        if (result !== true && result != null) {
+          violated.push({name: check_name, columns: t.checks[check_name] || []})
+        }
       }
     }
   }

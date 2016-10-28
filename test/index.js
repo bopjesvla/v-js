@@ -12,7 +12,7 @@ var simple = schema('simple')
 
 assert.deepEqual(simple.validate({}), success)
 assert.deepEqual(simple.validate({a: void 0}), success)
-assert(simple.validate({}, {partial: true}).success)
+assert.deepEqual(simple.validate({}, {partial: true}), success)
 assert.deepEqual(simple.validate({a: 'c', b: 'd'}), simple.e('unknown_field', 'b'))
 assert.deepEqual(simple.defaults(), {a: void 0})
 
@@ -28,4 +28,5 @@ assert.deepEqual(attrs.validate({is_nullable: 'YEAH', numeric_precision: 5}), at
 
 assert.deepEqual(users.validate({email: 'a@a.nl', password: 'a', virtue: 5}), success)
 assert.deepEqual(users.validate({email: 'a@a.nl', password: 'a', virtue: 5}), success)
+assert.deepEqual(users.validate({email: 'a@a.nl', virtue: 5}), users.e('constraint_violated', {name: 'not_null', columns: ['password']}))
 console.log('checks passed')

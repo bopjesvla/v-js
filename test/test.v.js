@@ -4,15 +4,6 @@ var Schema = require('v-js/schema')
         tables: {
             attributes: {
                 columns: {
-                    numeric_precision: {
-                        default: function anonymous(r,alasql,params
-/**/) {
-var y; return undefined
-},
-                        notnull: false,
-                        checks: null,
-                        domain: "cardinal_number"
-                    },
                     is_nullable: {
                         default: function anonymous(r,alasql,params
 /**/) {
@@ -21,6 +12,15 @@ var y; return undefined
                         notnull: false,
                         checks: null,
                         domain: "yes_or_no"
+                    },
+                    numeric_precision: {
+                        default: function anonymous(r,alasql,params
+/**/) {
+var y; return undefined
+},
+                        notnull: false,
+                        checks: null,
+                        domain: "cardinal_number"
                     }
                 },
                 checks: [

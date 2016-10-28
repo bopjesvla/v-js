@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": "bin.js",
   "scripts": {
-    "test": "cd test && v-js -U postgres -d SLAPTCHA --schema information_schema -t.attributes is_nullable,numeric_precision -t.check_constraints check_clause -f appschema.sql --out test.v.js && node .",
+    "test": "cd test && v-js -U postgres -d postgres --schema information_schema -t.attributes is_nullable,numeric_precision -t.check_constraints check_clause -f appschema.sql --out test.v.js && node .",
     "dump": "pg_dump -U postgres -h localhost -p 5433"
   },
   "repository": {
