@@ -114,3 +114,18 @@ schema('users').validate({email: "a@b", virtue: -2}, {checks: ["valid_email"]})
 schema('users').validate({email: "ab", title: "Priest", virtue: 5}, {checks: {valid_email: false}})
 // {success: true}
 ```
+
+## Limitations & Troubleshooting & Things to Do
+
+Limitations of v-js:
+
+- Limited support for major databases other than Postgres (Alasql and v-js aim to be SQL-compliant; v-js favors Postgres when other incompatibilities arise)
+- Limited implementation of Postgres functions (causes `TypeError: alasql.fn.function_you_called is not a function` errors; check `fn.js` if the function you're calling already has an implementation. If not, add your own!)
+- No type checking
+
+Limitations of Alasql, the project v-js builds on:
+
+- Limited support for non-expression SQL syntax
+- Limited support for casting values
+
+And much more.
