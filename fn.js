@@ -15,4 +15,3 @@ var fn = module.exports = {
         return str.indexOf ? str.indexOf(substr) : void 0
     }
 }
-fn.length = fn.char_length
